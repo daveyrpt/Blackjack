@@ -1,0 +1,85 @@
+let sum = 0;
+let cardOwn = [];
+let hasBlackJack = false;
+let isAlive = false;
+let message = "";
+
+// object initialize (key, value)
+let player = {
+    name: "Davey",
+    chip: 125
+}
+
+const startGame = document.querySelector("#start-game");
+const newCard = document.querySelector("#new-card");
+const messageOnTable = document.querySelector("#message-el");
+const cardOnTable = document.querySelector("#card-el")
+const sumOnTable = document.querySelector("#sum-el");
+const playerData = document.querySelector("#player-el")
+
+function generateRandomCardNumber() {
+    let randomNumber = Math.floor(Math.random() * 13) + 1;
+    if (randomNumber === 1) {
+        return 11;
+    } else if (randomNumber >= 11) {
+        return 10;
+    } else {
+        return randomNumber;
+    }
+}
+
+function loadGame() {
+    if (sum <= 20) {
+        message = "Draw new card to the deck?";
+    } else if (sum === 21) {
+        message = "You got Blackjack!";
+        hasBlackJack = true;
+    } else {
+        message = "You out of the game!";
+        isAlive = false;
+        newCard.style.color = "red";
+        newCard.textContent = "Unavailable";
+        
+    }
+    
+    messageOnTable.textContent = message;
+
+    cardOnTable.textContent = "Cards: ";
+    for (let counter = 0; counter < cardOwn.length; counter++) {
+        cardOnTable.textContent += cardOwn[counter] + " ";
+    }
+
+    sumOnTable.textContent = "Sum: ".concat(sum);
+}
+
+// Start Game Button
+startGame.addEventListener('click', function() {
+    isAlive = true;
+
+    let firstCard  = generateRandomCardNumber();
+    let secondCard = generateRandomCardNumber();
+
+    cardOwn = [firstCard, secondCard];
+    
+    sum = cardOwn.reduce((total, current) => {
+        return total + current;
+    }, 0);
+    loadGame();
+})
+
+// New Card Button
+newCard.addEventListener('click', function() {
+    //enable draw new card
+    if (isAlive === true && hasBlackJack === false) {
+        let addCard = generateRandomCardNumber();
+        sum += addCard;
+        cardOwn.push(addCard);
+        loadGame();
+    } else {
+        loadGame();
+    }
+
+})
+
+playerData.textContent = "Name: " + player.name + " - Chips: $" + player["chip"];
+
